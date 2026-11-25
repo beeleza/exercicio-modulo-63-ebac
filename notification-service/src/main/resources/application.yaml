@@ -1,0 +1,25 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: notification-service
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+        spring.json.value.default.type: com.beeleza.notification_service.event.OrderCreatedEvent
+        spring.json.trusted.packages: "com.beeleza.*"
+        spring.json.use.type.headers: false
+    listener:
+      concurrency: 3    # uma thread por partição
+
+app:
+  kafka:
+    topics:
+      order-created: order.created
